@@ -2,6 +2,8 @@
 
 > 一个开箱即用的本地全栈待办事项应用：原生 JavaScript 前端、Express REST API、SQLite 持久化，以及清晰的前后端 MVC 分层。
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
 无需安装数据库服务，也不需要注册账号。Clone、安装、启动，几分钟内就能拥有一套完整可读、可改、可学习的本地全栈示例。
 
 ![Agenda Application 应用预览](./preview.png)
@@ -471,9 +473,11 @@ npm run dev
 
 ## License
 
-当前仓库尚未添加`LICENSE`文件。在许可证明确之前，源代码默认仍受版权保护；公开可见不等于获得复制、修改或分发授权。
+本项目采用 [MIT License](./LICENSE) 开源。
 
-如果项目计划开放复用，建议仓库维护者后续选择并添加合适的开源许可证，例如MIT。
+你可以自由使用、复制、修改、合并、发布和分发本项目，但需要在副本或主要部分中保留原始版权声明和许可证文本。软件按“原样”提供，不附带任何明示或暗示的担保。
+
+Copyright © 2026 [IThuanghuaming](https://github.com/IThuanghuaming)
 
 ---
 
