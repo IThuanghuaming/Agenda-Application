@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="一个采用前后端分离 MVC 架构的本地全栈待办事项应用。"
+    />
+    <title>今日待办</title>
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="todo-card" aria-labelledby="app-title">
+        <header class="app-header">
+          <div class="brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="m7.5 12 3 3 6-7" />
+            </svg>
+          </div>
+          <div>
+            <p class="eyebrow">让每一天更有条理</p>
+            <h1 id="app-title">今日待办</h1>
+          </div>
+        </header>
+
+        <form class="task-form" id="task-form">
+          <div class="task-entry-row">
+            <label class="sr-only" for="task-input">输入待办事项</label>
+            <input
+              id="task-input"
+              name="task"
+              type="text"
+              maxlength="200"
+              placeholder="今天要做什么？"
+              autocomplete="off"
+              required
+            />
+            <button class="add-button" type="submit">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              <span>添加</span>
+            </button>
+          </div>
+          <fieldset class="priority-picker">
+            <legend>优先级</legend>
+            <div class="priority-options">
+              <label class="priority-option high">
+                <input type="radio" name="priority" value="high" />
+                <span class="priority-dot" aria-hidden="true"></span>
+                <span>高</span>
+              </label>
+              <label class="priority-option medium">
+                <input type="radio" name="priority" value="medium" checked />
+                <span class="priority-dot" aria-hidden="true"></span>
+                <span>中</span>
+              </label>
+              <label class="priority-option low">
+                <input type="radio" name="priority" value="low" />
+                <span class="priority-dot" aria-hidden="true"></span>
+                <span>低</span>
+              </label>
+            </div>
+          </fieldset>
+
+        </form>
+
+        <div class="import-panel">
+          <input
+            id="import-file"
+            type="file"
+            accept=".txt,.csv,.json,text/plain,text/csv,application/json"
+            hidden
+          />
+          <button id="import-button" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 16V4M7.5 8.5 12 4l4.5 4.5" />
+              <path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" />
+            </svg>
+            批量导入
+          </button>
+          <div class="import-copy">
+            <span>支持 TXT、CSV、JSON</span>
+            <small>TXT 每行一项，末尾可标注高 / 中 / 低</small>
+          </div>
+        </div>
+        <p id="import-status" class="import-status" role="status" hidden></p>
+
+        <div class="summary" aria-live="polite">
+          <div>
+            <span class="summary-number" id="pending-count">0</span>
+            <span>项待完成</span>
+          </div>
+          <span class="summary-divider" aria-hidden="true"></span>
+          <div>
+            <span class="summary-number completed-number" id="completed-count">0</span>
+            <span>项已完成</span>
+          </div>
+          <span class="summary-divider" aria-hidden="true"></span>
+          <div>
+            <span class="summary-number failed-number" id="failed-count">0</span>
+            <span>项未完成</span>
+          </div>
+        </div>
+
+        <div class="filter-bar" aria-label="按任务状态筛选">
+          <button class="filter-button is-active" type="button" data-filter="all" aria-pressed="true">全部</button>
+          <button class="filter-button" type="button" data-filter="pending" aria-pressed="false">待完成</button>
+          <button class="filter-button" type="button" data-filter="completed" aria-pressed="false">已完成</button>
+          <button class="filter-button" type="button" data-filter="failed" aria-pressed="false">未完成</button>
+        </div>
+
+        <div class="list-tools" aria-label="搜索和日期筛选">
+          <label class="search-field" for="task-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5" />
+              <path d="m16 16 4 4" />
+            </svg>
+            <input
+              id="task-search"
+              type="search"
+              placeholder="搜索任务内容…"
+              autocomplete="off"
+            />
+          </label>
+          <label class="date-filter-field" for="date-filter">
+            <span>创建日期</span>
+            <input id="date-filter" type="date" />
+          </label>
+          <button id="reset-list-filters" type="button" hidden>重置筛选</button>
+        </div>
+
+        <div class="list-heading">
+          <h2>任务清单</h2>
+          <div class="list-actions">
+            <span id="total-label">共 0 项</span>
+            <button id="clear-completed" type="button" hidden>清空已完成</button>
+            <button id="clear-all" type="button" hidden>全部清空</button>
+          </div>
+        </div>
+
+        <ul class="task-list" id="task-list" aria-label="待办事项列表"></ul>
+
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M9 11.5 11 13.5 15.5 9" />
+              <path d="M6.5 4.5h11a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2Z" />
+            </svg>
+          </div>
+          <h2 id="empty-title">今天还没有任务</h2>
+          <p id="empty-description">写下今天要做的第一件事吧 ✨</p>
+        </div>
+      </section>
+
+      <p class="storage-note">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3 5 6.5v5c0 4.4 3 7.9 7 9.5 4-1.6 7-5.1 7-9.5v-5L12 3Z" />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+        任务保存在本项目的 SQLite 数据库中
+      </p>
+    </main>
+
+    <template id="task-template">
+      <li class="task-item" draggable="true">
+        <span class="drag-handle" title="拖曳排序" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01" /></svg>
+        </span>
+        <label class="task-toggle">
+          <input class="task-checkbox" type="checkbox" />
+          <span class="custom-checkbox" aria-hidden="true">
+            <svg viewBox="0 0 16 16">
+              <path d="m3.5 8 3 3 6-6" />
+            </svg>
+          </span>
+          <span class="task-content">
+            <span class="task-text"></span>
+            <span class="task-meta-row">
+              <span class="priority-badge"></span>
+              <span class="status-badge"></span>
+              <span class="creation-date"></span>
+              <span class="task-timing"></span>
+            </span>
+          </span>
+        </label>
+        <div class="task-actions">
+          <button class="timing-button" type="button">设置时间</button>
+          <button class="start-button" type="button" hidden>开始</button>
+          <button class="edit-button" type="button" aria-label="编辑任务">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m4 20 4.2-1 10.6-10.6a2 2 0 0 0-2.8-2.8L5.4 16.2 4 20Z" />
+              <path d="m14.5 7 2.8 2.8" />
+            </svg>
+          </button>
+          <button class="delete-button" type="button" aria-label="删除任务">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h16M9 7V4h6v3M18 7l-1 13H7L6 7M10 11v5M14 11v5" />
+            </svg>
+          </button>
+        </div>
+        <form class="time-settings-form" hidden novalidate>
+          <fieldset>
+            <legend>设置任务完成时间</legend>
+            <div class="task-timing-options">
+              <label class="timing-option">
+                <input type="radio" name="task-timing-mode" value="deadline" checked />
+                <span>指定时间</span>
+              </label>
+              <label class="timing-option">
+                <input type="radio" name="task-timing-mode" value="duration" />
+                <span>所需时长</span>
+              </label>
+            </div>
+            <label class="task-deadline-field">
+              <span>截止时间</span>
+              <input class="task-deadline-input" type="datetime-local" />
+            </label>
+            <label class="task-duration-field" hidden>
+              <span>预计用时</span>
+              <span class="duration-input-wrap">
+                <input class="task-duration-input" type="number" step="1" inputmode="numeric" />
+                <span>分钟</span>
+              </span>
+            </label>
+          </fieldset>
+          <div class="time-settings-actions">
+            <button class="save-time-button" type="submit">保存时间</button>
+            <button class="remove-time-button" type="button" hidden>清除时间</button>
+            <button class="cancel-time-button" type="button">取消</button>
+          </div>
+        </form>
+        <form class="edit-form" hidden>
+          <label class="sr-only">编辑任务内容</label>
+          <input class="edit-input" type="text" maxlength="200" required />
+          <fieldset class="edit-priority-picker">
+            <legend>修改优先级</legend>
+            <label class="priority-option high">
+              <input type="radio" name="edit-priority" value="high" />
+              <span class="priority-dot" aria-hidden="true"></span><span>高</span>
+            </label>
+            <label class="priority-option medium">
+              <input type="radio" name="edit-priority" value="medium" />
+              <span class="priority-dot" aria-hidden="true"></span><span>中</span>
+            </label>
+            <label class="priority-option low">
+              <input type="radio" name="edit-priority" value="low" />
+              <span class="priority-dot" aria-hidden="true"></span><span>低</span>
+            </label>
+          </fieldset>
+          <div class="edit-actions">
+            <button class="save-edit-button" type="submit">保存</button>
+            <button class="cancel-edit-button" type="button">取消</button>
+          </div>
+        </form>
+      </li>
+    </template>
+
+    <dialog id="reminder-dialog" class="reminder-dialog">
+      <form method="dialog">
+        <div class="reminder-icon" aria-hidden="true">⏰</div>
+        <h2>任务即将到期</h2>
+        <p id="reminder-message"></p>
+        <button type="submit">知道了</button>
+      </form>
+    </dialog>
+
+    <dialog id="time-feedback-dialog" class="reminder-dialog">
+      <form method="dialog">
+        <div class="reminder-icon warning-icon" aria-hidden="true">!</div>
+        <h2>时间设置有误</h2>
+        <p id="time-feedback-message"></p>
+        <button type="submit">重新设置</button>
+      </form>
+    </dialog>
+
+    <script type="module" src="/src/controllers/taskController.js"></script>
+  </body>
+</html>
