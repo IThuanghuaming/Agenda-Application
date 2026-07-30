@@ -1,7 +1,10 @@
 # Agenda Application · 今日待办
 
+**文档语言 / Documentation:** [简体中文](./README.md) | [English](./README_EN.md)
+
 > 一个开箱即用的本地全栈待办事项应用：原生 JavaScript 前端、Express REST API、SQLite 持久化，以及清晰的前后端 MVC 分层。
 
+[![Version](https://img.shields.io/badge/version-v1.0.0-3178c6.svg)](#版本与发布信息)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 无需安装数据库服务，也不需要注册账号。Clone、安装、启动，几分钟内就能拥有一套完整可读、可改、可学习的本地全栈示例。
@@ -23,6 +26,18 @@
 - 如何设计简单、可运行的 REST API；
 - 如何让 SQLite 在项目目录内自动初始化并持久化数据；
 - 如何用 npm workspaces 管理一个小型全栈仓库。
+
+## 版本与发布信息
+
+当前版本：**v1.0.0**
+
+| 版本 | 日期 | 状态 | 说明 |
+| --- | --- | --- | --- |
+| `v1.0.0` | 2026-07-31 | 当前版本 | 首个公开MVP，包含前后端MVC、SQLite持久化、任务管理、筛选搜索、计时提醒、批量导入和拖曳排序 |
+
+项目版本以根目录`package.json`中的`version`字段为准。GitHub正式Release发布后，可在[Releases页面](https://github.com/IThuanghuaming/Agenda-Application/releases)查看可下载版本和更新说明。
+
+> 文档同时提供简体中文和English版本；应用界面目前以简体中文为主，尚未实现界面语言切换。
 
 ## 功能亮点
 
@@ -151,7 +166,9 @@ Agenda-Application/
 ├─ .gitignore
 ├─ package.json                         # npm workspaces和根命令
 ├─ package-lock.json
-└─ README.md
+├─ LICENSE                              # MIT开源许可证
+├─ README.md                            # 简体中文文档
+└─ README_EN.md                         # English文档
 ```
 
 ## MVC 如何分工
@@ -459,7 +476,7 @@ npm run dev
 
 1. Fork本仓库；
 2. 创建功能分支：`git switch -c feature/your-feature`；
-3. 保持修改聚焦，并同步更新相关README内容；
+3. 保持修改聚焦，并同步更新`README.md`和`README_EN.md`；
 4. 执行`npm run build`；
 5. 提交Pull Request，说明改动目的、行为变化和验证方式。
 
